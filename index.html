@@ -1181,7 +1181,7 @@
 
                 if (this.gamesList.length === 0) {
                     listEl.innerHTML =
-                        '<div style="text-align:center; padding:10px;">[Kaydedilmiş oyun yok. Bir tane oluşturun!]</div>';
+                        '<div style="text-align:center; padding:10px;">Kaydedilmiş oyun yok. Bir tane oluşturun!</div>';
                     return;
                 }
 
@@ -1196,8 +1196,8 @@
         <span>${game.catCount}x${game.rowCount} • ${dateStr}</span>
       </div>
       <div class="game-actions">
-        <button class="btn btn-sm btn-danger" onclick="app.deleteGame('${game.id}')">[Sil]</button>
-        <button class="btn btn-sm btn-secondary" onclick="app.loadGame('${game.id}')">[Oyna]</button>
+        <button class="btn btn-sm btn-danger" onclick="app.deleteGame('${game.id}')">Sil</button>
+        <button class="btn btn-sm btn-secondary" onclick="app.loadGame('${game.id}')">Oyna</button>
       </div>
     `;
                     listEl.appendChild(el);
