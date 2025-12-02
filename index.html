@@ -22,6 +22,10 @@
         href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,700;0,900;1,400&family=Anton&display=swap"
         rel="stylesheet">
 
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
+
 
 
     <style>
@@ -1106,6 +1110,19 @@
     <script>
 
         // NO CLOUD / FIREBASE CODE HERE. PURE LOCAL STORAGE.
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHgvgR60SgF04ZQlUCw1mWuJSZmDNViXI",
+            authDomain: "lokum-buyuk-risk.firebaseapp.com",
+            databaseURL: "https://lokum-buyuk-risk-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lokum-buyuk-risk",
+            storageBucket: "lokum-buyuk-risk.firebasestorage.app",
+            messagingSenderId: "242859600678",
+            appId: "1:242859600678:web:7d7a149608e2aed7d16fe7",
+            measurementId: "G-TL7CWLCE2B"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
 
 
@@ -1132,109 +1149,59 @@
 
 
             init: function () {
-
-                this.loadLocalGames();
-
+                this.loadGamesFromCloud();   // alles komt nu uit Firebase
                 this.generateBuilderInputs();
-
                 this.showView('home');
-
             },
 
 
 
-            loadLocalGames: function () {
 
-                const localData = localStorage.getItem('lokum_local_games');
-
-                if (localData) {
-
-                    try {
-
-                        this.gamesList = JSON.parse(localData);
-
-                    } catch (e) {
-
+            loadGamesFromCloud: function () {
+                db.ref('games')
+                    .orderByChild('timestamp')
+                    .limitToLast(100)
+                    .on('value', snapshot => {
                         this.gamesList = [];
+                        snapshot.forEach(child => {
+                            const game = child.val();
+                            game.id = child.key;
+                            this.gamesList.push(game);
+                        });
 
-                    }
-
-                } else {
-
-                    this.gamesList = [];
-
-                }
-
-                this.renderGameList();
-
+                        // Nieuwste eerst
+                        this.gamesList.reverse();
+                        this.renderGameList();
+                    });
             },
-
-
 
             renderGameList: function () {
-
                 const listEl = document.getElementById('games-list-container');
-
                 listEl.innerHTML = '';
 
-
-
-                // Sort: newest first
-
-                this.gamesList.sort((a, b) => {
-
-                    const ta = a.timestamp || 0;
-
-                    const tb = b.timestamp || 0;
-
-                    return tb - ta;
-
-                });
-
-
-
                 if (this.gamesList.length === 0) {
-
-                    listEl.innerHTML = '<div style="text-align:center; padding:10px;">Kaydedilmiş oyun yok. Bir tane oluşturun!</div>';
-
+                    listEl.innerHTML =
+                        '<div style="text-align:center; padding:10px;">[translate:Kaydedilmiş oyun yok. Bir tane oluşturun!]</div>';
                     return;
-
                 }
 
-
-
                 this.gamesList.forEach(game => {
-
                     const el = document.createElement('div');
-
                     el.className = 'game-item';
-
                     const dateStr = new Date(game.timestamp || Date.now()).toLocaleDateString('tr-TR');
 
                     el.innerHTML = `
-
-                    <div class="game-meta">
-
-                        <h4>${game.title || 'Adsız'}</h4>
-
-                        <span>${game.catCount}x${game.rowCount} • ${dateStr}</span>
-
-                    </div>
-
-                    <div class="game-actions">
-
-                        <button class="btn btn-sm btn-danger" onclick="app.deleteGame('${game.id}')">Sil</button>
-
-                        <button class="btn btn-sm btn-secondary" onclick="app.loadGame('${game.id}')">Oyna</button>
-
-                    </div>
-
-                `;
-
+      <div class="game-meta">
+        <h4>${game.title || '[translate:Adsız]'}</h4>
+        <span>${game.catCount}x${game.rowCount} • ${dateStr}</span>
+      </div>
+      <div class="game-actions">
+        <button class="btn btn-sm btn-danger" onclick="app.deleteGame('${game.id}')">[translate:Sil]</button>
+        <button class="btn btn-sm btn-secondary" onclick="app.loadGame('${game.id}')">[translate:Oyna]</button>
+      </div>
+    `;
                     listEl.appendChild(el);
-
                 });
-
             },
 
 
@@ -1255,109 +1222,51 @@
 
 
 
-            loadGame: function (id) {
+            loadGame: async function (id) {
+                const snap = await db.ref(`games/${id}`).once('value');
+                if (!snap.exists()) return;
 
-                const game = this.gamesList.find(g => g.id === id);
+                this.data = snap.val();
+                this.data.id = id; // huidige game ID bewaren
 
-                if (!game) return;
-
-
-
-                this.data = JSON.parse(JSON.stringify(game)); // Deep clone
-
-
-
-                // Sync inputs
-
+                // velden terugzetten in de builder
                 document.getElementById('game-title').value = this.data.title;
-
                 document.getElementById('team-count').value = this.data.teamCount;
-
                 document.getElementById('cat-count').value = this.data.catCount;
-
                 document.getElementById('row-count').value = this.data.rowCount;
 
-
-
-                this.generateBuilderInputs();
-
-
-
-                // Restore grid
-
-                for (let c = 0; c < this.data.catCount; c++) {
-
-                    for (let r = 0; r < this.data.rowCount; r++) {
-
-                        if (this.data.questions[c] && this.data.questions[c][r]) {
-
-                            const q = this.data.questions[c][r];
-
-                            const qi = document.querySelector(`.inp-q[data-cat="${c}"][data-row="${r}"]`);
-
-                            const ai = document.querySelector(`.inp-a[data-cat="${c}"][data-row="${r}"]`);
-
-                            if (qi) qi.value = q.q;
-
-                            if (ai) ai.value = q.a;
-
-                        }
-
-                    }
-
-                }
-
+                this.generateBuilderInputs(); // vult inputs met this.data.categories & this.data.questions
                 this.startGame();
-
             },
 
-
-
-            deleteGame: function (id) {
-
+            deleteGame: async function (id) {
                 if (!confirm("Bu oyunu silmek istediğinize emin misiniz?")) return;
 
-                this.gamesList = this.gamesList.filter(g => g.id !== id);
-
-                localStorage.setItem('lokum_local_games', JSON.stringify(this.gamesList));
-
-                this.renderGameList();
-
+                // uit Firebase verwijderen
+                await db.ref(`games/${id}`).remove();
             },
 
 
 
-            saveGame: function () {
 
-                this.scrapeBuilderData();
+            saveGame: async function () {
+                this.scrapeBuilderData(); // vult this.data met title, catCount, rowCount, categories, questions, teamCount
 
-
-
+                const gameRef = db.ref('games').push(); // unieke ID
                 const payload = {
-
                     ...this.data,
-
-                    id: 'local_' + Date.now(),
-
-                    timestamp: Date.now()
-
+                    id: gameRef.key,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                    // eventueel: owner: huidige moderator
                 };
 
+                await gameRef.set(payload);
+                alert("Oyun kaydedildi!");
 
-
-                // Add to list
-
-                this.gamesList.push(payload);
-
-                localStorage.setItem('lokum_local_games', JSON.stringify(this.gamesList));
-
-                alert("Oyun Başarıyla Kaydedildi (Yerel)!");
-
-                this.renderGameList();
-
+                // Terug naar home en lijst herladen (realtime listener doet dit al, maar dit forceert immediate UI-update)
                 this.showView('home');
-
             },
+
 
 
 
