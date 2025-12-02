@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lokum: Büyük Risk</title>
+
+
+
+    <!-- Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,700;0,900;1,400&family=Anton&display=swap"
+        rel="stylesheet">
+
+
+
+    <style>
+        :root {
+
+            --primary-purple: #2c2f73;
+
+            --deep-purple: #1a1c4b;
+
+            --accent-red: #c41821;
+
+            --text-white: #ffffff;
+
+            --bg-color: #f4f4f4;
+
+            --success-green: #00cc66;
+
+            --font-main: 'Source Sans 3', sans-serif;
+
+            --font-display: 'Anton', 'Poplar Std Black', sans-serif;
+
+        }
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+
+        body {
+
+            margin: 0;
+            padding: 0;
+
+            font-family: var(--font-main);
+
+            background-color: var(--bg-color);
+
+            background-image:
+
+                radial-gradient(#ddd 1px, transparent 1px),
+
+                radial-gradient(#ddd 1px, transparent 1px);
+
+            background-size: 20px 20px;
+
+            background-position: 0 0, 10px 10px;
+
+            color: #333;
+
+            min-height: 100vh;
+
+            padding-bottom: 100px;
+
+        }
+
+
+
+        /* --- Animations --- */
+
+        @keyframes bounce-green {
+
+            0% {
+                transform: scale(1);
+                background-color: transparent;
+            }
+
+            50% {
+                transform: scale(1.1);
+                background-color: rgba(0, 204, 102, 0.3);
+            }
+
+            100% {
+                transform: scale(1);
+                background-color: transparent;
+            }
+
+        }
+
+        @keyframes shake-red {
+
+            0% {
+                transform: translateX(0);
+                background-color: transparent;
+            }
+
+            25% {
+                transform: translateX(-5px);
+                background-color: rgba(196, 24, 33, 0.3);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+                background-color: transparent;
+            }
+
+        }
+
+        .anim-correct {
+            animation: bounce-green 0.5s ease-in-out;
+            border-radius: 8px;
+        }
+
+        .anim-wrong {
+            animation: shake-red 0.4s ease-in-out;
+            border-radius: 8px;
+        }
+
+
+
+        /* --- Header --- */
+
+        header {
+
+            background: var(--primary-purple);
+
+            border-bottom: 4px solid var(--accent-red);
+
+            padding: 1rem 2rem;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            box-shadow: 0 4px 10px rgba(44, 47, 115, 0.3);
+
+        }
+
+
+
+        .logo {
+
+            font-family: var(--font-display);
+
+            font-size: 2.5rem;
+
+            text-transform: uppercase;
+
+            color: var(--text-white);
+
+            text-shadow: 2px 2px 0px var(--accent-red);
+
+            cursor: pointer;
+
+            letter-spacing: 1px;
+
+        }
+
+        .logo span {
+            color: var(--accent-red);
+            text-shadow: none;
+        }
+
+
+
+        nav a {
+
+            margin-left: 20px;
+            text-decoration: none;
+
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 700;
+
+            font-size: 1.1rem;
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+            transition: color 0.3s;
+
+        }
+
+        nav a:hover {
+            color: var(--text-white);
+        }
+
+
+
+        /* --- Main --- */
+
+        main {
+
+            max-width: 1400px;
+
+            margin: 2rem auto;
+            padding: 0 1rem;
+
+            min-height: 80vh;
+
+            display: flex;
+            flex-direction: column;
+
+            justify-content: flex-start;
+
+        }
+
+
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+            width: 100%;
+        }
+
+        .view-section.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+
+        @keyframes fadeIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+
+
+        /* --- Hero --- */
+
+        .hero {
+
+            text-align: center;
+
+            background: var(--primary-purple);
+            color: white;
+
+            padding: 5rem 2rem;
+
+            border: 4px solid var(--accent-red);
+
+            box-shadow: 10px 10px 0px var(--deep-purple);
+
+            position: relative;
+            overflow: hidden;
+
+            border-radius: 4px;
+            margin-bottom: 3rem;
+
+        }
+
+        .hero::before {
+
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+
+            width: 200px;
+            height: 200px;
+            background: var(--accent-red);
+
+            border-radius: 50%;
+            opacity: 0.2;
+
+        }
+
+        .hero::after {
+
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+
+            width: 150px;
+            height: 150px;
+            background: #fff;
+
+            transform: rotate(45deg);
+            opacity: 0.1;
+
+        }
+
+
+
+        .hero h1 {
+
+            font-family: var(--font-display);
+            font-size: 5rem;
+
+            margin: 0 0 2rem 0;
+            line-height: 1;
+
+            text-shadow: 6px 6px 0px var(--accent-red);
+
+            text-transform: uppercase;
+
+        }
+
+
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+
+            font-family: var(--font-display);
+            padding: 15px 40px;
+
+            font-size: 1.5rem;
+            border: 3px solid var(--deep-purple);
+
+            background: var(--accent-red);
+            color: var(--text-white);
+
+            text-transform: uppercase;
+            cursor: pointer;
+
+            box-shadow: 6px 6px 0px var(--deep-purple);
+
+            transition: all 0.1s;
+            text-decoration: none;
+            display: inline-block;
+
+        }
+
+        .btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px var(--deep-purple);
+            background: #d61f29;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--deep-purple);
+        }
+
+
+
+        .btn-secondary {
+
+            background: white;
+            color: var(--primary-purple);
+
+            border-color: var(--primary-purple);
+            box-shadow: 6px 6px 0px var(--primary-purple);
+
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 8px 8px 0px var(--primary-purple);
+        }
+
+
+
+        .btn-sm {
+            padding: 5px 15px;
+            font-size: 1rem;
+            border-width: 2px;
+            box-shadow: 2px 2px 0px var(--deep-purple);
+        }
+
+        .btn-danger {
+
+            background: var(--accent-red);
+            border-color: #900;
+
+            font-size: 0.9rem;
+            padding: 5px 10px;
+
+        }
+
+
+
+        /* --- Saved List --- */
+
+        .games-list-wrapper {
+
+            background: white;
+            border: 3px solid var(--primary-purple);
+
+            padding: 2rem;
+            box-shadow: 8px 8px 0px rgba(44, 47, 115, 0.2);
+
+            max-width: 800px;
+            margin: 0 auto;
+
+        }
+
+        .list-header {
+
+            font-family: var(--font-display);
+            font-size: 2rem;
+
+            color: var(--primary-purple);
+            border-bottom: 2px solid var(--primary-purple);
+
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+
+        }
+
+        .game-item {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+
+            margin-bottom: 10px;
+            transition: 0.2s;
+
+        }
+
+        .game-item:hover {
+            border-left: 5px solid var(--accent-red);
+            transform: translateX(5px);
+        }
+
+        .game-meta h4 {
+            margin: 0 0 5px 0;
+            color: var(--primary-purple);
+            font-size: 1.2rem;
+        }
+
+        .game-meta span {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+
+
+        /* --- Builder --- */
+
+        .builder-container {
+
+            background: white;
+            border: 3px solid var(--primary-purple);
+
+            padding: 2rem;
+            box-shadow: 8px 8px 0px rgba(44, 47, 115, 0.2);
+
+            overflow-x: auto;
+
+        }
+
+        .builder-header {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 2rem;
+            border-bottom: 2px dashed var(--primary-purple);
+
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 15px;
+
+        }
+
+        .builder-controls {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .control-item label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            color: var(--primary-purple);
+            font-size: 0.8rem;
+        }
+
+
+
+        input[type="text"],
+        input[type="number"] {
+
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+
+            font-family: var(--font-main);
+            font-size: 1rem;
+            background: #f9f9f9;
+
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 4px 4px 0px var(--accent-red);
+        }
+
+
+
+        .category-row {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .questions-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+
+
+        .q-cell {
+            border: 2px solid #e0e0e0;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .q-cell h4 {
+            margin: 0 0 10px 0;
+            text-align: center;
+            background: var(--primary-purple);
+            color: white;
+            padding: 5px;
+        }
+
+        .inp-q,
+        .inp-a {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+
+
+        /* --- Game Board --- */
+
+        .game-board {
+
+            display: grid;
+            gap: 10px;
+            background: var(--deep-purple);
+
+            padding: 15px;
+            border: 4px solid var(--primary-purple);
+
+            box-shadow: 0 10px 20px rgba(44, 47, 115, 0.3);
+            overflow-x: auto;
+
+        }
+
+        .category-card {
+
+            background: var(--primary-purple);
+            color: white;
+            padding: 20px 5px;
+
+            text-align: center;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px var(--deep-purple);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 100px;
+            border: 2px solid #4a4e9e;
+
+        }
+
+        .clue-card {
+
+            background: var(--primary-purple);
+            color: var(--accent-red);
+
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            height: 120px;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            text-shadow: 1px 1px 0px var(--deep-purple);
+            border: 2px solid #4a4e9e;
+
+        }
+
+        .clue-card:hover {
+            background: #363b8c;
+            transform: scale(1.02);
+            z-index: 2;
+        }
+
+        .clue-card.disabled {
+            background: #202255;
+            color: #202255;
+            cursor: default;
+            pointer-events: none;
+            border-color: #202255;
+        }
+
+
+
+        /* --- Modal --- */
+
+        .modal-overlay {
+
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 28, 75, 0.95);
+
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+
+        }
+
+        .modal-content {
+
+            background: var(--primary-purple);
+            color: white;
+            width: 100%;
+
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+
+            border: 4px solid var(--text-white);
+            padding: 2rem;
+
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+            align-items: center;
+
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+
+        }
+
+        .modal-text {
+
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+
+            text-transform: uppercase;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+
+            text-shadow: 4px 4px 0px var(--deep-purple);
+
+        }
+
+        .modal-answer {
+
+            font-family: var(--font-main);
+            font-size: 2rem;
+            color: var(--accent-red);
+
+            margin-bottom: 2rem;
+            display: none;
+            font-style: italic;
+            font-weight: bold;
+
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            width: 100%;
+            border-radius: 8px;
+
+        }
+
+
+
+        /* --- Scoring --- */
+
+        .modal-scoring {
+
+            display: none;
+            margin-bottom: 1.5rem;
+            width: 100%;
+
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+        .modal-score-grid {
+
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+
+        }
+
+        .team-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .team-control span {
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #ddd;
+        }
+
+        .score-btns-wrapper {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mini-btn {
+
+            width: 35px;
+            height: 35px;
+            border: 2px solid white;
+
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+
+        }
+
+        .btn-correct {
+            background-color: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .btn-wrong {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+
+
+        .score-board {
+
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+
+            background: var(--deep-purple);
+            color: white;
+            padding: 10px 15px;
+
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+
+            border-top: 5px solid var(--accent-red);
+            z-index: 500;
+            overflow-x: auto;
+
+        }
+
+        .score-teams-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            flex: 1;
+        }
+
+        .score-team {
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 70px;
+
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px 10px;
+            border-radius: 4px;
+
+        }
+
+        .score-val {
+            font-size: 1.3rem;
+            color: var(--accent-red);
+            text-shadow: 1px 1px 0 black;
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <header>
+
+        <div class="logo" onclick="event.preventDefault(); app.showView('home')">
+
+            Lokum: <span>Büyük Risk</span>
+
+        </div>
+
+        <nav>
+
+            <a href="#" onclick="event.preventDefault(); app.showView('home')">Home</a>
+
+            <a href="#" onclick="event.preventDefault(); app.showView('builder')">Build</a>
+
+        </nav>
+
+    </header>
+
+
+
+    <main>
+
+        <!-- VIEW: HOME -->
+
+        <div id="view-home" class="view-section active">
+
+            <div class="hero">
+
+                <div class="hero-content">
+
+                    <h1>Lokum: Büyük Risk</h1>
+
+                    <div class="btn-group">
+
+                        <a href="#" class="btn" onclick="event.preventDefault(); app.showView('builder')">Create &
+                            Save</a>
+
+                        <!-- Play Latest loads the most recent local game or demo -->
+
+                        <a href="#" class="btn btn-secondary"
+                            style="background:transparent; color:white; border-color:white; box-shadow:none;"
+                            onclick="event.preventDefault(); app.playLatestGame()">Play Demo</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Local Saved List -->
+
+            <div class="games-list-wrapper">
+
+                <div class="list-header" id="list-header-text">Kaydedilen Oyunlar</div>
+
+                <div id="games-list-container">
+
+                    <div style="text-align:center; padding:20px;">Checking local storage...</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- VIEW: BUILDER -->
+
+        <div id="view-builder" class="view-section">
+
+            <div class="builder-container">
+
+                <div class="builder-header">
+
+                    <h2
+                        style="font-family: var(--font-display); margin:0; font-size: 2.5rem; color: var(--primary-purple);">
+                        Oyun Oluşturucu</h2>
+
+                    <div class="builder-controls">
+
+                        <div class="control-item">
+
+                            <label>Kategoriler</label>
+
+                            <input type="number" id="cat-count" value="5" min="1" max="8"
+                                style="width: 70px; padding: 8px;" onchange="app.handleDimensionChange()">
+
+                        </div>
+
+                        <div class="control-item">
+
+                            <label>Satırlar</label>
+
+                            <input type="number" id="row-count" value="5" min="1" max="10"
+                                style="width: 70px; padding: 8px;" onchange="app.handleDimensionChange()">
+
+                        </div>
+
+                        <div class="control-item">
+
+                            <label>Takımlar</label>
+
+                            <input type="number" id="team-count" value="4" min="1" max="20"
+                                style="width: 70px; padding: 8px;">
+
+                        </div>
+
+                        <div style="margin-left:auto; display:flex; gap:10px;">
+
+                            <button class="btn btn-secondary" onclick="app.saveGame()">Kaydet</button>
+
+                            <button class="btn" onclick="app.startGame()">Oyna</button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label>Oyun Başlığı</label>
+
+                    <input type="text" id="game-title" value="Benim Harika Quizim">
+
+                </div>
+
+
+
+                <h3 style="color: var(--primary-purple);">Kategoriler</h3>
+
+                <div class="category-row" id="category-inputs"></div>
+
+
+
+                <h3 style="color: var(--primary-purple);">Sorular & Cevaplar</h3>
+
+                <div class="questions-grid" id="question-inputs"></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- VIEW: GAME BOARD -->
+
+        <div id="view-game" class="view-section" style="width: 100%;">
+
+            <h2 id="display-game-title"
+                style="text-align: center; font-family: var(--font-display); font-size: 3rem; margin-bottom: 1rem; color: var(--primary-purple); text-shadow: 2px 2px 0 #fff;">
+            </h2>
+
+            <div class="game-board" id="game-grid"></div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- MODAL -->
+
+    <div class="modal-overlay" id="game-modal">
+
+        <div class="modal-content">
+
+            <div id="modal-question" class="modal-text"></div>
+
+            <div id="modal-answer" class="modal-answer"></div>
+
+            <div id="modal-scoring" class="modal-scoring">
+
+                <p
+                    style="margin: 0 0 15px 0; font-size: 1rem; text-transform: uppercase; color: #ccc; letter-spacing: 2px;">
+                    Puanlama</p>
+
+                <div class="modal-score-grid" id="modal-score-container"></div>
+
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+
+                <button id="btn-reveal" class="btn btn-secondary" onclick="app.revealAnswer()">Cevabı Göster</button>
+
+                <button id="btn-close" class="btn" onclick="app.closeModal()" style="display:none;">Kapat</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="score-board" id="score-board" style="display: none;">
+
+        <div class="score-teams-container" id="scoreboard-container"></div>
+
+        <button class="btn" style="padding: 8px 20px; font-size: 0.9rem; white-space: nowrap; margin-left: auto;"
+            onclick="app.showView('builder')">Düzenle</button>
+
+    </div>
+
+
+
+    <script>
+
+        // NO CLOUD / FIREBASE CODE HERE. PURE LOCAL STORAGE.
+
+
+
+        const app = {
+
+            data: {
+
+                title: "Örnek Oyun",
+
+                teamCount: 4, catCount: 5, rowCount: 5,
+
+                categories: ["Tarih", "Bilim", "Müzik", "Teknoloji", "Karışık"],
+
+                questions: []
+
+            },
+
+            scores: {},
+
+            currentClue: null,
+
+            gamesList: [],
+
+
+
+            init: function () {
+
+                this.loadLocalGames();
+
+                this.generateBuilderInputs();
+
+                this.showView('home');
+
+            },
+
+
+
+            loadLocalGames: function () {
+
+                const localData = localStorage.getItem('lokum_local_games');
+
+                if (localData) {
+
+                    try {
+
+                        this.gamesList = JSON.parse(localData);
+
+                    } catch (e) {
+
+                        this.gamesList = [];
+
+                    }
+
+                } else {
+
+                    this.gamesList = [];
+
+                }
+
+                this.renderGameList();
+
+            },
+
+
+
+            renderGameList: function () {
+
+                const listEl = document.getElementById('games-list-container');
+
+                listEl.innerHTML = '';
+
+
+
+                // Sort: newest first
+
+                this.gamesList.sort((a, b) => {
+
+                    const ta = a.timestamp || 0;
+
+                    const tb = b.timestamp || 0;
+
+                    return tb - ta;
+
+                });
+
+
+
+                if (this.gamesList.length === 0) {
+
+                    listEl.innerHTML = '<div style="text-align:center; padding:10px;">Kaydedilmiş oyun yok. Bir tane oluşturun!</div>';
+
+                    return;
+
+                }
+
+
+
+                this.gamesList.forEach(game => {
+
+                    const el = document.createElement('div');
+
+                    el.className = 'game-item';
+
+                    const dateStr = new Date(game.timestamp || Date.now()).toLocaleDateString('tr-TR');
+
+                    el.innerHTML = `
+
+                    <div class="game-meta">
+
+                        <h4>${game.title || 'Adsız'}</h4>
+
+                        <span>${game.catCount}x${game.rowCount} • ${dateStr}</span>
+
+                    </div>
+
+                    <div class="game-actions">
+
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteGame('${game.id}')">Sil</button>
+
+                        <button class="btn btn-sm btn-secondary" onclick="app.loadGame('${game.id}')">Oyna</button>
+
+                    </div>
+
+                `;
+
+                    listEl.appendChild(el);
+
+                });
+
+            },
+
+
+
+            playLatestGame: function () {
+
+                if (this.gamesList.length > 0) {
+
+                    this.loadGame(this.gamesList[0].id);
+
+                } else {
+
+                    this.loadHardcodedDemo();
+
+                }
+
+            },
+
+
+
+            loadGame: function (id) {
+
+                const game = this.gamesList.find(g => g.id === id);
+
+                if (!game) return;
+
+
+
+                this.data = JSON.parse(JSON.stringify(game)); // Deep clone
+
+
+
+                // Sync inputs
+
+                document.getElementById('game-title').value = this.data.title;
+
+                document.getElementById('team-count').value = this.data.teamCount;
+
+                document.getElementById('cat-count').value = this.data.catCount;
+
+                document.getElementById('row-count').value = this.data.rowCount;
+
+
+
+                this.generateBuilderInputs();
+
+
+
+                // Restore grid
+
+                for (let c = 0; c < this.data.catCount; c++) {
+
+                    for (let r = 0; r < this.data.rowCount; r++) {
+
+                        if (this.data.questions[c] && this.data.questions[c][r]) {
+
+                            const q = this.data.questions[c][r];
+
+                            const qi = document.querySelector(`.inp-q[data-cat="${c}"][data-row="${r}"]`);
+
+                            const ai = document.querySelector(`.inp-a[data-cat="${c}"][data-row="${r}"]`);
+
+                            if (qi) qi.value = q.q;
+
+                            if (ai) ai.value = q.a;
+
+                        }
+
+                    }
+
+                }
+
+                this.startGame();
+
+            },
+
+
+
+            deleteGame: function (id) {
+
+                if (!confirm("Bu oyunu silmek istediğinize emin misiniz?")) return;
+
+                this.gamesList = this.gamesList.filter(g => g.id !== id);
+
+                localStorage.setItem('lokum_local_games', JSON.stringify(this.gamesList));
+
+                this.renderGameList();
+
+            },
+
+
+
+            saveGame: function () {
+
+                this.scrapeBuilderData();
+
+
+
+                const payload = {
+
+                    ...this.data,
+
+                    id: 'local_' + Date.now(),
+
+                    timestamp: Date.now()
+
+                };
+
+
+
+                // Add to list
+
+                this.gamesList.push(payload);
+
+                localStorage.setItem('lokum_local_games', JSON.stringify(this.gamesList));
+
+                alert("Oyun Başarıyla Kaydedildi (Yerel)!");
+
+                this.renderGameList();
+
+                this.showView('home');
+
+            },
+
+
+
+            // Core Logic
+
+            showView: function (id) {
+
+                document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active'));
+
+                document.getElementById('view-' + id).classList.add('active');
+
+                document.getElementById('score-board').style.display = (id === 'game') ? 'flex' : 'none';
+
+            },
+
+
+
+            handleDimensionChange: function () {
+
+                this.scrapeBuilderData();
+
+                const cc = parseInt(document.getElementById('cat-count').value);
+
+                const rc = parseInt(document.getElementById('row-count').value);
+
+                this.data.catCount = Math.min(Math.max(cc, 1), 8);
+
+                this.data.rowCount = Math.min(Math.max(rc, 1), 10);
+
+                while (this.data.categories.length < this.data.catCount) this.data.categories.push("Yeni Kategori");
+
+                this.generateBuilderInputs();
+
+            },
+
+
+
+            generateBuilderInputs: function () {
+
+                const cc = this.data.catCount;
+
+                const rc = this.data.rowCount;
+
+                const cDiv = document.getElementById('category-inputs');
+
+                const qDiv = document.getElementById('question-inputs');
+
+
+
+                const style = `grid-template-columns: repeat(${cc}, 1fr);`;
+
+                cDiv.style.cssText = style;
+
+                qDiv.style.cssText = style;
+
+
+
+                let cHtml = '';
+
+                let qHtml = '';
+
+
+
+                for (let c = 0; c < cc; c++) {
+
+                    cHtml += `<input type="text" class="cat-input" data-idx="${c}" placeholder="Kategori ${c + 1}" value="${this.data.categories[c] || ''}">`;
+
+                    let col = '<div class="q-col">';
+
+                    for (let r = 0; r < rc; r++) {
+
+                        let qv = '', av = '';
+
+                        if (this.data.questions[c] && this.data.questions[c][r]) {
+
+                            qv = this.data.questions[c][r].q;
+
+                            av = this.data.questions[c][r].a;
+
+                        }
+
+                        col += `
+
+                        <div class="q-cell">
+
+                            <h4>${(r + 1) * 100}</h4>
+
+                            <input type="text" class="inp-q" data-cat="${c}" data-row="${r}" placeholder="Soru" value="${qv}">
+
+                            <input type="text" class="inp-a" data-cat="${c}" data-row="${r}" placeholder="Cevap" value="${av}">
+
+                        </div>
+
+                    `;
+
+                    }
+
+                    col += '</div>';
+
+                    qHtml += col;
+
+                }
+
+                cDiv.innerHTML = cHtml;
+
+                qDiv.innerHTML = qHtml;
+
+            },
+
+
+
+            scrapeBuilderData: function () {
+
+                this.data.title = document.getElementById('game-title').value;
+
+                this.data.teamCount = parseInt(document.getElementById('team-count').value) || 4;
+
+                const cis = document.querySelectorAll('.cat-input');
+
+                this.data.categories = [];
+
+                cis.forEach(i => this.data.categories.push(i.value));
+
+
+
+                this.data.questions = [];
+
+                for (let c = 0; c < this.data.catCount; c++) {
+
+                    this.data.questions[c] = [];
+
+                    for (let r = 0; r < this.data.rowCount; r++) {
+
+                        const qi = document.querySelector(`.inp-q[data-cat="${c}"][data-row="${r}"]`);
+
+                        const ai = document.querySelector(`.inp-a[data-cat="${c}"][data-row="${r}"]`);
+
+                        this.data.questions[c][r] = {
+
+                            q: qi ? qi.value : '', a: ai ? ai.value : '', value: (r + 1) * 100, solved: false
+
+                        };
+
+                    }
+
+                }
+
+            },
+
+
+
+            startGame: function () {
+
+                this.scrapeBuilderData();
+
+                this.scores = {};
+
+                for (let i = 1; i <= this.data.teamCount; i++) this.scores[i] = 0;
+
+                this.renderGrid();
+
+                this.renderScoreboard();
+
+                document.getElementById('display-game-title').innerText = this.data.title;
+
+                this.showView('game');
+
+            },
+
+
+
+            renderGrid: function () {
+
+                const g = document.getElementById('game-grid');
+
+                g.innerHTML = '';
+
+                g.style.gridTemplateColumns = `repeat(${this.data.catCount}, 1fr)`;
+
+
+
+                this.data.categories.forEach(cat => {
+
+                    const d = document.createElement('div');
+
+                    d.className = 'category-card'; d.innerText = cat || 'Kategori';
+
+                    g.appendChild(d);
+
+                });
+
+
+
+                for (let r = 0; r < this.data.rowCount; r++) {
+
+                    for (let c = 0; c < this.data.catCount; c++) {
+
+                        const q = this.data.questions[c] ? this.data.questions[c][r] : null;
+
+                        const d = document.createElement('div');
+
+                        if (q) {
+
+                            d.className = `clue-card ${q.solved ? 'disabled' : ''}`;
+
+                            d.innerText = q.solved ? '' : `${q.value}`;
+
+                            d.onclick = () => this.openClue(c, r);
+
+                        } else {
+
+                            d.className = 'clue-card disabled';
+
+                        }
+
+                        g.appendChild(d);
+
+                    }
+
+                }
+
+            },
+
+
+
+            renderScoreboard: function () {
+
+                const c = document.getElementById('scoreboard-container');
+
+                c.innerHTML = '';
+
+                for (let i = 1; i <= this.data.teamCount; i++) {
+
+                    const d = document.createElement('div'); d.className = 'score-team';
+
+                    d.innerHTML = `<span>Takım ${i}</span><span id="score-${i}" class="score-val">0</span>`;
+
+                    c.appendChild(d);
+
+                }
+
+            },
+
+
+
+            openClue: function (c, r) {
+
+                const q = this.data.questions[c][r];
+
+                if (q.solved) return;
+
+                this.currentClue = { c, r, val: q.value };
+
+
+
+                document.getElementById('modal-question').innerText = q.q || "Soru metni yok";
+
+                document.getElementById('modal-answer').innerText = q.a || "Cevap metni yok";
+
+                document.getElementById('modal-answer').style.display = 'none';
+
+                document.getElementById('modal-scoring').style.display = 'none';
+
+                document.getElementById('btn-reveal').style.display = 'inline-block';
+
+                document.getElementById('btn-close').style.display = 'none';
+
+
+
+                const mc = document.getElementById('modal-score-container');
+
+                mc.innerHTML = '';
+
+                for (let i = 1; i <= this.data.teamCount; i++) {
+
+                    const d = document.createElement('div'); d.className = 'team-control'; d.id = `mt-${i}`;
+
+                    d.innerHTML = `<span>Takım ${i}</span><div class="score-btns-wrapper">
+
+                    <button class="mini-btn btn-correct" onclick="app.score(${i},true)">✓</button>
+
+                    <button class="mini-btn btn-wrong" onclick="app.score(${i},false)">✗</button>
+
+                </div>`;
+
+                    mc.appendChild(d);
+
+                }
+
+                document.getElementById('game-modal').style.display = 'flex';
+
+            },
+
+
+
+            revealAnswer: function () {
+
+                document.getElementById('modal-answer').style.display = 'block';
+
+                document.getElementById('modal-scoring').style.display = 'block';
+
+                document.getElementById('btn-reveal').style.display = 'none';
+
+                document.getElementById('btn-close').style.display = 'inline-block';
+
+            },
+
+
+
+            score: function (tid, correct) {
+
+                if (!this.currentClue) return;
+
+                const pts = correct ? this.currentClue.val : -this.currentClue.val;
+
+                this.scores[tid] += pts;
+
+                const el = document.getElementById(`score-${tid}`);
+
+                if (el) el.innerText = `${this.scores[tid]}`;
+
+
+
+                const te = document.getElementById(`mt-${tid}`);
+
+                te.classList.remove('anim-correct', 'anim-wrong');
+
+                void te.offsetWidth;
+
+                te.classList.add(correct ? 'anim-correct' : 'anim-wrong');
+
+            },
+
+
+
+            closeModal: function () {
+
+                if (this.currentClue) {
+
+                    this.data.questions[this.currentClue.c][this.currentClue.r].solved = true;
+
+                    this.renderGrid();
+
+                }
+
+                document.getElementById('game-modal').style.display = 'none';
+
+            },
+
+
+
+            loadHardcodedDemo: function () {
+
+                this.data.title = "Örnek Oyun";
+
+                this.data.catCount = 5; this.data.rowCount = 5;
+
+                this.data.categories = ["Coğrafya", "Bilim", "Sanat", "Teknoloji", "Karışık"];
+
+                this.data.questions = [];
+
+                for (let c = 0; c < 5; c++) {
+
+                    this.data.questions[c] = [];
+
+                    for (let r = 0; r < 5; r++) {
+
+                        this.data.questions[c][r] = { q: "Örnek Soru", a: "Örnek Cevap", value: (r + 1) * 100, solved: false };
+
+                    }
+
+                }
+
+                this.generateBuilderInputs();
+
+                this.startGame();
+
+            }
+
+        };
+
+
+
+        window.app = app;
+
+        window.addEventListener('load', () => app.init());
+
+    </script>
+
+
+
+</body>
+
+</html>
