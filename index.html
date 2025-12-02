@@ -593,28 +593,33 @@
         /* --- Game Board --- */
 
         .game-board {
-
             display: grid;
-            gap: 10px;
+            gap: 6px;
+            /* iets kleiner */
             background: var(--deep-purple);
-
-            padding: 15px;
+            padding: 8px;
+            /* iets kleiner */
             border: 4px solid var(--primary-purple);
-
             box-shadow: 0 10px 20px rgba(44, 47, 115, 0.3);
-            overflow-x: auto;
 
+            /* Belangrijk voor geen verticale scroll */
+            max-height: calc(100vh - 220px);
+            /* header + titel + margins */
+            overflow-y: auto;
+            /* als het echt niet past, dan hier intern scrollen i.p.v. hele pagina */
         }
 
-        .category-card {
 
+        .category-card {
             background: var(--primary-purple);
             color: white;
-            padding: 20px 5px;
+            padding: 8px 4px;
+            /* minder padding */
 
             text-align: center;
             font-family: var(--font-display);
-            font-size: 1.4rem;
+            font-size: 1.1rem;
+            /* kleiner font */
 
             text-transform: uppercase;
             text-shadow: 2px 2px 0px var(--deep-purple);
@@ -623,31 +628,33 @@
             align-items: center;
             justify-content: center;
 
-            min-height: 100px;
+            min-height: 6vh;
+            /* was 100px */
             border: 2px solid #4a4e9e;
-
         }
 
         .clue-card {
-
             background: var(--primary-purple);
             color: var(--accent-red);
 
             font-family: var(--font-display);
-            font-size: 2.5rem;
+            font-size: 1.4rem;
+            /* was 2.5rem */
 
             display: flex;
             align-items: center;
             justify-content: center;
 
-            height: 120px;
+            height: 60px;
+            /* was 120px */
             cursor: pointer;
             transition: all 0.2s;
 
+            height: 7vh;
             text-shadow: 1px 1px 0px var(--deep-purple);
             border: 2px solid #4a4e9e;
-
         }
+
 
         .clue-card:hover {
             background: #363b8c;
