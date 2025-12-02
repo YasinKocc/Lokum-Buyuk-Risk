@@ -595,19 +595,17 @@
         .game-board {
             display: grid;
             gap: 6px;
-            /* iets kleiner */
             background: var(--deep-purple);
             padding: 8px;
-            /* iets kleiner */
             border: 4px solid var(--primary-purple);
             box-shadow: 0 10px 20px rgba(44, 47, 115, 0.3);
-
-            /* Belangrijk voor geen verticale scroll */
-            max-height: calc(100vh - 220px);
-            /* header + titel + margins */
-            overflow-y: auto;
-            /* als het echt niet past, dan hier intern scrollen i.p.v. hele pagina */
+            width: 100%;
+            /* hoogte = vensterhoogte - header (bijv. 90px) - scoreboard/footer (bijv. 70px) - extra marge/titel (bijv. 60px) */
+            height: calc(80vh - 90px - 70px - 60px);
         }
+
+
+
 
 
         .category-card {
@@ -654,6 +652,23 @@
             text-shadow: 1px 1px 0px var(--deep-purple);
             border: 2px solid #4a4e9e;
         }
+
+        .category-card,
+        .clue-card {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* (en verder jouw styling) */
+        }
+
+
+        .clue-card {
+            color: var(--accent-red);
+            /* overschrijft tekstkleur voor punten */
+        }
+
 
 
         .clue-card:hover {
@@ -1130,6 +1145,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
 
 
 
