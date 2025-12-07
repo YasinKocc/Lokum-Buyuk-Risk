@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lokum: Büyük Risk</title>
+
+
+
+    <!-- Fonts -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,700;0,900;1,400&family=Anton&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK v8 (compatibiliteit met je namespace code) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <link rel="stylesheet" href="styles2.css">
+
+</head>
+
+<body>
+
+
+
+    <header>
+
+        <div class="logo" onclick="event.preventDefault(); app.showView('home')">
+
+            Lokum: <span>Büyük Risk</span>
+
+        </div>
+
+        <nav>
+
+            <a href="#" onclick="event.preventDefault(); app.showView('home')">Home</a>
+
+            <a href="#" onclick="event.preventDefault(); app.showView('builder')">Build</a>
+
+        </nav>
+
+    </header>
+
+
+
+    <main>
+
+        <!-- VIEW: HOME -->
+
+        <div id="view-home" class="view-section active">
+
+            <div class="hero">
+
+                <div class="hero-content">
+
+                    <h1>Lokum: Büyük Risk</h1>
+
+                    <div class="btn-group">
+
+                        <a href="#" class="btn" onclick="event.preventDefault(); app.showView('builder')">Create &
+                            Save</a>
+
+                        <!-- Play Latest loads the most recent local game or demo -->
+
+                        <a href="#" class="btn btn-secondary"
+                            style="background:transparent; color:white; border-color:white; box-shadow:none;"
+                            onclick="event.preventDefault(); app.playLatestGame()">Play Demo</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Local Saved List -->
+
+            <div class="games-list-wrapper">
+
+                <div class="list-header" id="list-header-text">Kaydedilen Oyunlar</div>
+
+                <div id="games-list-container">
+
+                    <div style="text-align:center; padding:20px;">Checking local storage...</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- VIEW: BUILDER -->
+
+        <div id="view-builder" class="view-section">
+
+            <div class="builder-container">
+
+                <div class="builder-header">
+
+                    <h2
+                        style="font-family: var(--font-display); margin:0; font-size: 2.5rem; color: var(--primary-purple);">
+                        Oyun Oluşturucu</h2>
+
+                    <div class="builder-controls">
+
+                        <div class="control-item">
+
+                            <label>Kategoriler</label>
+
+                            <input type="number" id="cat-count" value="5" min="1" max="8"
+                                style="width: 70px; padding: 8px;" onchange="app.handleDimensionChange()">
+
+                        </div>
+
+                        <div class="control-item">
+
+                            <label>Satırlar</label>
+
+                            <input type="number" id="row-count" value="5" min="1" max="10"
+                                style="width: 70px; padding: 8px;" onchange="app.handleDimensionChange()">
+
+                        </div>
+
+                        <div class="control-item">
+
+                            <label>Takımlar</label>
+
+                            <input type="number" id="team-count" value="4" min="1" max="20"
+                                style="width: 70px; padding: 8px;">
+
+                        </div>
+
+                        <div style="margin-left:auto; display:flex; gap:10px;">
+
+                            <button class="btn btn-secondary" onclick="app.saveGame()">Kaydet</button>
+
+                            <button class="btn" onclick="app.startGame()">Oyna</button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="input-group">
+
+                    <label>Oyun Başlığı</label>
+
+                    <input type="text" id="game-title" value="Benim Harika Quizim">
+
+                </div>
+
+
+
+                <h3 style="color: var(--primary-purple);">Kategoriler</h3>
+
+                <div class="category-row" id="category-inputs"></div>
+
+
+
+                <h3 style="color: var(--primary-purple);">Sorular & Cevaplar</h3>
+
+                <div class="questions-grid" id="question-inputs"></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- VIEW: GAME BOARD -->
+
+        <div id="view-game" class="view-section" style="width: 100%;">
+
+            <h2 id="display-game-title"
+                style="text-align: center; font-family: var(--font-display); font-size: 3rem; margin-bottom: 1rem; color: var(--primary-purple); text-shadow: 2px 2px 0 #fff;">
+            </h2>
+
+            <div class="game-board" id="game-grid"></div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- MODAL -->
+
+    <div class="modal-overlay" id="game-modal">
+
+        <div class="modal-content">
+
+            <div id="modal-question" class="modal-text"></div>
+
+            <div id="modal-answer" class="modal-answer"></div>
+
+            <div id="modal-scoring" class="modal-scoring">
+
+                <p
+                    style="margin: 0 0 15px 0; font-size: 1rem; text-transform: uppercase; color: #ccc; letter-spacing: 2px;">
+                    Puanlama</p>
+
+                <div class="modal-score-grid" id="modal-score-container"></div>
+
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+
+                <button id="btn-reveal" class="btn btn-secondary" onclick="app.revealAnswer()">Cevabı Göster</button>
+
+                <button id="btn-close" class="btn" onclick="app.closeModal()" style="display:none;">Kapat</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="score-board" id="score-board" style="display: none;">
+
+        <div class="score-teams-container" id="scoreboard-container"></div>
+
+        <button class="btn" style="padding: 8px 20px; font-size: 0.9rem; white-space: nowrap; margin-left: auto;"
+            onclick="app.showView('builder')">Düzenle</button>
+
+    </div>
+
+    <!-- Zoom Controls - VERTICAAL RECHTS -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in" onclick="app.zoomIn()">+</button>
+        <button class="zoom-btn" id="zoom-out" onclick="app.zoomOut()">−</button>
+    </div>
+
+
+
+
+    <script src="script2.js"></script>
+
+
+
+</body>
+
+</html>
