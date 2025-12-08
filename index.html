@@ -416,18 +416,26 @@
             border-radius: 50%;
             transition: transform 0.1s;
             background: var(--accent-red); /* Aangepast naar rood (accent-red) */
+            /* DEZE IS AANGEPAST */
             box-shadow: 0 4px 0 var(--deep-purple); 
+        }
+        
+        /* Specifieke stijl voor het icoon in de dupliceer knop */
+        .mini-btn .material-symbols-outlined {
+            font-size: 1.5rem; 
         }
 
         .mini-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             background: #d61f29; /* Iets lichtere rode tint bij hover */
-            box-shadow: 0 4px 0 var(--deep-purple); 
+            /* DEZE IS AANGEPAST */
+            box-shadow: 0 6px 0 var(--deep-purple);
         }
 
         .mini-btn:active:not(:disabled) {
             transform: translateY(2px);
-            box-shadow: 0 4px 0 var(--deep-purple); 
+            /* DEZE IS AANGEPAST */
+            box-shadow: 0 2px 0 var(--deep-purple);
         }
 
         .mini-btn:disabled {
@@ -722,7 +730,7 @@
             scoredTeams: {},
             gamesList: [], // Lijst met games uit Firebase
             gameListenerRef: null, // Referentie voor de actieve game listener
-            isListOpen: false, // NIEUW: Houdt de staat van de spellijst op de homepage bij
+            isListOpen: false, // Houdt de staat van de spellijst op de homepage bij
 
             init: function () {
                 this.handleDimChange();
@@ -822,6 +830,13 @@
                     actions.style.display = 'flex';
                     actions.style.gap = '8px';
 
+                    // NIEUWE DUPLICEER KNOP
+                    const duplicateBtn = document.createElement('button');
+                    duplicateBtn.className = 'mini-btn';
+                    duplicateBtn.title = 'Kopyala'; // Dupliceer
+                    duplicateBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+                    duplicateBtn.onclick = (ev) => { ev.stopPropagation(); this.duplicateGame(g.id); };
+                    
                     const playBtn = document.createElement('button');
                     playBtn.className = 'mini-btn';
                     playBtn.title = 'Oyna';
@@ -834,12 +849,53 @@
                     del.title = 'Sil';
                     del.onclick = (ev) => { ev.stopPropagation(); this.deleteGame(g.id); };
 
+                    actions.appendChild(duplicateBtn); // Dupliceer knop eerst
                     actions.appendChild(playBtn);
                     actions.appendChild(del);
                     item.appendChild(info);
                     item.appendChild(actions);
                     container.appendChild(item);
                 });
+            },
+            
+            // FUNCTIE: Kopieert een bestaand spel in Firebase, inclusief huidige scores en solved status
+            duplicateGame: async function(id) {
+                try {
+                    const gameSnapshot = await db.ref(`games/${id}`).once('value');
+                    if (!gameSnapshot.exists()) {
+                        alert('Kopyalanacak oyun bulunamadı.'); // Spel om te kopiëren niet gevonden
+                        return;
+                    }
+                    
+                    const originalGame = gameSnapshot.val();
+                    
+                    // Verwijder metadata die niet gekopieerd mag worden
+                    delete originalGame.id; 
+                    
+                    // Creëer de duplicaat payload
+                    const duplicatePayload = {
+                        ...originalGame,
+                        title: originalGame.title ? `Kopya: ${originalGame.title}` : 'Kopya: Yeni Oyun', // Voeg 'Kopya' toe aan de titel
+                        timestamp: firebase.database.ServerValue.TIMESTAMP, // Nieuwe timestamp
+                        // De scores en solved status worden nu direct van de originele game gekopieerd.
+                    };
+
+                    // Push duplicaat naar Firebase
+                    const newGameRef = db.ref('games').push();
+                    duplicatePayload.id = newGameRef.key;
+                    await newGameRef.set(duplicatePayload);
+                    
+                    alert(`Oyun başarıyla kopyalandı: ${duplicatePayload.title}`); // Spel succesvol gekopieerd
+                    
+                    // De list listener zal dit automatisch oppikken en renderGameList aanroepen
+                    if (this.isListOpen) {
+                        this.loadGamesFromCloud(false); 
+                    }
+                    
+                } catch (error) {
+                    console.error("Dupliceer hatası:", error); // Dupliceer fout
+                    alert('Kopyalama sırasında bir hata oluştu.'); // Er is een fout opgetreden tijdens het kopiëren
+                }
             },
 
             // Laadt een game en stelt een listener in voor real-time updates (indien nodig)
@@ -903,13 +959,18 @@
                 // De listener in loadGamesFromCloud() zorgt voor de automatische update van de lijst
             },
 
-            // NIEUWE/GEFIXTE FUNCTIE: Slaat de game op in Firebase en start deze.
+            // FUNCTIE: Slaat de game op in Firebase en start deze.
+            // Aangepast om bestaande game bij te werken als this.data.id bestaat.
             saveAndPlayGame: async function () {
                 // 1. Lees builder values naar this.data
                 this.data.title = document.getElementById('game-title').value || 'Yeni Oyun';
                 this.data.catCount = parseInt(document.getElementById('cat-count').value) || 5;
                 this.data.rowCount = parseInt(document.getElementById('row-count').value) || 5;
                 this.data.teamCount = parseInt(document.getElementById('team-count').value) || 4;
+
+                // 2. Tussentijdse opslag van de oude solved status voor bestaande spellen.
+                // Dit moet gebeuren voordat this.data.questions wordt overschreven!
+                const oldQuestions = JSON.parse(JSON.stringify(this.data.questions)); 
 
                 this.data.categories = [];
                 for (let c = 0; c < this.data.catCount; c++) {
@@ -923,32 +984,61 @@
                     for (let r = 0; r < this.data.rowCount; r++) {
                         const qEl = document.getElementById(`q-${c}-${r}`);
                         const aEl = document.getElementById(`a-${c}-${r}`);
+                        
+                        // Haal de 'solved' status op uit de oude structuur als deze bestaat
+                        const existingSolved = oldQuestions[c] && oldQuestions[c][r] 
+                                               ? oldQuestions[c][r].solved 
+                                               : false;
+                                               
                         this.data.questions[c][r] = {
                             q: qEl ? qEl.value || "Soru Girilmedi" : "Soru Girilmedi",
                             a: aEl ? aEl.value || "Cevap Girilmedi" : "Cevap Girilmedi",
                             val: (r + 1) * 100,
-                            solved: false // Begin altijd met onopgeloste vragen
+                            solved: existingSolved // Gebruik de bewaarde status
                         };
                     }
                 }
 
-                // 2. Initialiseer scores voor een nieuwe game
-                this.scores = {};
-                for (let i = 1; i <= this.data.teamCount; i++) this.scores[i] = 0;
+                // 3. Bepaal of we een nieuw spel maken of een bestaande bijwerken
+                let gameRef;
+                let isNewGame = !this.data.id;
+                let existingId = this.data.id;
 
-                // 3. Push naar Firebase
-                const gameRef = db.ref('games').push();
+                if (isNewGame) {
+                    // Nieuw spel: Maak nieuwe ID en initialiseer scores
+                    gameRef = db.ref('games').push();
+                    this.scores = {};
+                    for (let i = 1; i <= this.data.teamCount; i++) this.scores[i] = 0;
+                } else {
+                    // Bestaand spel: Gebruik bestaande ID en behoud huidige scores
+                    gameRef = db.ref(`games/${existingId}`);
+                    // De scores zijn al geladen in this.scores via loadGame()
+                }
+
+
+                // 4. Creëer de payload
                 const payload = {
                     ...this.data,
-                    id: gameRef.key,
+                    // Overschrijf alleen de ID als het een nieuw spel is
+                    id: isNewGame ? gameRef.key : existingId, 
                     timestamp: firebase.database.ServerValue.TIMESTAMP,
-                    scores: this.scores // NIEUW: Sla de initiële scores op
+                    scores: this.scores // Sla de scores op (initieel of bestaand)
                 };
-                await gameRef.set(payload);
+                
+                // Zorg ervoor dat de ID op het hoogste niveau correct is voor de database operatie
+                if (isNewGame) {
+                    await gameRef.set(payload); // Voeg nieuw spel toe
+                } else {
+                    // Werk bestaand spel bij
+                    // Zorg ervoor dat de ID niet wordt overschreven in de data, hoewel de ref deze al bevat
+                    delete payload.id; 
+                    await gameRef.update(payload); // Update bestaand spel
+                    payload.id = existingId; // Herstel ID lokaal
+                }
 
-                // 4. Laad en start de opgeslagen game (via DB listener)
-                this.loadGame(gameRef.key);
-                alert("Oyun başarıyla kaydedildi!"); // Feedback geven
+                // 5. Laad en start de opgeslagen game (via DB listener)
+                this.loadGame(payload.id);
+                alert(`Oyun başarıyla ${isNewGame ? 'kaydedildi' : 'güncellendi'}!`); // Feedback geven
             },
 
 
